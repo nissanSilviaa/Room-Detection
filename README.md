@@ -12,7 +12,7 @@ Figure 2 <br>
 <br>
 
 ***Region3 Result:*** <br>
-![alt text](Region3 Result.png)<br>
+![alt text](Region3Result.png)<br>
 
 **Problem**<br>
 ![alt text](regionProblem.png)<br>
