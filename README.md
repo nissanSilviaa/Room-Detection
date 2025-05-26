@@ -8,4 +8,8 @@ The code must also identify rooms that are **not** separated by walls shown in *
 ![alt text](image.png)<br>
 Figure 1 <br>
 ![alt text](image-1.png)<br>
-Figure 2
+Figure 2 <br>
+<br>
+
+***Region3 Result:*** <br>
+![alt text](Region3 Result.png)
