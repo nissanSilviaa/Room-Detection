@@ -23,6 +23,7 @@ local directions = {
 	Vector2.new(0, -1),
 }
 
+
 -- BFS to explore connected node groups
 local function bfs(startKey)
 	local queue = {startKey}
@@ -79,6 +80,20 @@ for key, node in pairs(nodeMap) do
 		end
 	end
 end
+
+for key, node in pairs(nodeMap) do
+	local label = Instance.new("BillboardGui", node)
+	label.Size = UDim2.new(0, 100, 0, 40)
+	label.Adornee = node
+	label.AlwaysOnTop = true
+
+	local text = Instance.new("TextLabel", label)
+	text.Size = UDim2.new(1, 0, 1, 0)
+	text.Text = key
+	text.TextScaled = true
+	text.BackgroundTransparency = 1
+end
+
 
 -- Visualize room areas
 for _, group in ipairs(groups) do
