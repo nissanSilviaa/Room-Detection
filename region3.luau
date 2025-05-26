@@ -26,8 +26,8 @@ end
 for key, node in pairs(nodeMap) do
 	if not visited[key] then
 		local origin = node.Position
-		local minBound = origin - Vector3.new(16, 10, 16)
-		local maxBound = origin + Vector3.new(16, 10, 16)
+		local minBound = origin - Vector3.new(20, 10, 20) --16
+		local maxBound = origin + Vector3.new(20, 10, 20) --16
 		local region = createRegion3FromBounds(minBound, maxBound)
 
 		local partsInRegion = workspace:GetPartBoundsInBox(region.CFrame, region.Size)
