@@ -12,4 +12,13 @@ Figure 2 <br>
 <br>
 
 ***Region3 Result:*** <br>
-![alt text](Region3 Result.png)
+![alt text](Region3 Result.png)<br>
+
+**Problem**<br>
+![alt text](regionProblem.png)<br>
+If the walls are too close together the code thinks it is all the same room since<br>
+the code is hard coded to look in a 20x20 space around the node
+```
+local minBound = origin - Vector3.new(20, 10, 20) --16
+local maxBound = origin + Vector3.new(20, 10, 20) --16
+```
