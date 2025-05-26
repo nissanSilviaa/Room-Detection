@@ -1,0 +1,105 @@
+local nodesFolder = workspace:WaitForChild("placeditems"):WaitForChild("nodes")
+local stepSize = 4
+
+-- Build a grid of nodes
+local nodeMap = {}
+for _, node in pairs(nodesFolder:GetChildren()) do
+	if node:IsA("BasePart") then
+		local x = math.round(node.Position.X / stepSize)
+		local z = math.round(node.Position.Z / stepSize)
+		local key = x .. "," .. z
+		nodeMap[key] = node
+	end
+end
+
+local function getNeighbors(x, z, groupMap)
+	local count = 0
+	for _, dir in ipairs({
+		Vector2.new(1, 0), Vector2.new(-1, 0),
+		Vector2.new(0, 1), Vector2.new(0, -1),
+		}) do
+		local key = (x + dir.X) .. "," .. (z + dir.Y)
+		if groupMap[key] then
+			count += 1
+		end
+	end
+	return count
+end
+
+-- Flood fill groups
+local visited = {}
+local groups = {}
+
+for key, node in pairs(nodeMap) do
+	if visited[key] then continue end
+
+	local group = {}
+	local groupMap = {}
+	local queue = {key}
+
+	while #queue > 0 do
+		local current = table.remove(queue, 1)
+		if not visited[current] and nodeMap[current] then
+			visited[current] = true
+			local x, z = current:match("([^,]+),([^,]+)")
+			x, z = tonumber(x), tonumber(z)
+			group[current] = nodeMap[current]
+			groupMap[current] = true
+
+			for _, dir in ipairs({
+				Vector2.new(1, 0), Vector2.new(-1, 0),
+				Vector2.new(0, 1), Vector2.new(0, -1),
+				}) do
+				local neighborKey = (x + dir.X) .. "," .. (z + dir.Y)
+				if nodeMap[neighborKey] and not visited[neighborKey] then
+					table.insert(queue, neighborKey)
+				end
+			end
+		end
+	end
+
+	-- Check if it's a closed loop
+	local isLoop = true
+	for k in pairs(group) do
+		local x, z = k:match("([^,]+),([^,]+)")
+		x, z = tonumber(x), tonumber(z)
+		if getNeighbors(x, z, groupMap) < 2 then
+			isLoop = false
+			break
+		end
+	end
+
+	if isLoop then
+		table.insert(groups, group)
+	end
+end
+
+-- Create parts for each loop
+for _, group in ipairs(groups) do
+	local minX, maxX = math.huge, -math.huge
+	local minZ, maxZ = math.huge, -math.huge
+	local y = nil
+
+	for k, node in pairs(group) do
+		local pos = node.Position
+		minX = math.min(minX, pos.X)
+		maxX = math.max(maxX, pos.X)
+		minZ = math.min(minZ, pos.Z)
+		maxZ = math.max(maxZ, pos.Z)
+		y = y or pos.Y
+	end
+
+	local sizeX = ((maxX - minX) / stepSize + 1) * stepSize
+	local sizeZ = ((maxZ - minZ) / stepSize + 1) * stepSize
+	local center = Vector3.new((minX + maxX) / 2, y, (minZ + maxZ) / 2)
+
+	local part = Instance.new("Part")
+	part.Anchored = true
+	part.Size = Vector3.new(sizeX, 1, sizeZ)
+	part.Position = center + Vector3.new(0, 0.5, 0)
+	part.BrickColor = BrickColor.Random()
+	part.Material = Enum.Material.SmoothPlastic
+	part.CanCollide = false
+	part.Name = "Room"
+	part.Parent = workspace
+end
